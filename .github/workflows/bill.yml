@@ -1,0 +1,29 @@
+name: bill sync 
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  download-and-unzip:
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.issue.body, '.zip') || contains(join(github.event.issue.comments.*.body), '.zip') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: weread sync
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ZIP_PASSWORD: ${{ secrets.ZIP_PASSWORD }}
+            ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          python scripts/bill.py
