@@ -1,2 +1,5 @@
 requests>=2.25.1
 PyGithub>=1.54
+notion-client==2.2.1
+retrying
+pendulum
